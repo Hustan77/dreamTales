@@ -819,7 +819,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
       <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8">
-            {!form.premium && (
+            {!isPremium && (
               <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-center shadow">
                 <p className="text-yellow-800 font-medium">
                   You're using the free version of DreamTales. Upgrade to unlock unlimited stories, longer adventures, and immersive writing styles!
@@ -958,7 +958,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                     >
                       {universes.map((u) => {
                         const isPremiumUniverse = !["custom", "Harry Potter", "Frozen", "Pokemon"].includes(u);
-                        const disabled = isPremiumUniverse && !form.premium;
+                        const disabled = isPremiumUniverse && !isPremium;
 
                         return (
                           <option
@@ -966,7 +966,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                             value={u}
                             disabled={disabled}
                           >
-                            {u} {isPremiumUniverse ? (form.premium ? "✨" : "🔒") : ""}
+                            {u} {isPremiumUniverse ? (isPremium ? "✨" : "🔒") : ""}
                           </option>
                         );
                       })}
@@ -993,12 +993,12 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
               <input
                 type="range"
                 min="1"
-                max={form.premium ? 15 : 5}
+                max={isPremium ? 15 : 5}
                 value={form.length}
                 onChange={e => handleChange('length', parseInt(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
-              {!form.premium && form.length > 5 && (
+              {!isPremium && form.length > 5 && (
                 <p className="text-red-500 text-sm mt-2">
                   🔒 Story length is limited to 5 minutes in the free version. Upgrade to unlock longer adventures!
                 </p>
@@ -1013,7 +1013,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                 value={form.storyStyle || "classic"}
                 onChange={e => {
                   const style = e.target.value;
-                  if (!form.premium && style !== "classic") {
+                  if (!isPremium && style !== "classic") {
                     alert("Upgrade to DreamTales Unlimited to unlock premium story styles!");
                     return;
                   }
@@ -1024,7 +1024,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                   <option
                     key={style.id}
                     value={style.id}
-                    disabled={!form.premium && style.premium}                  >
+                    disabled={!isPremium && style.premium}                  >
                     {style.label} {style.premium && !isPremium ? "🔒" : ""}
                   </option>
                 ))}
@@ -1067,9 +1067,9 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                   return (
                     <button
                       key={styleKey}
-                      disabled={!form.premium && styleKey !== "classic"}
+                      disabled={!isPremium && styleKey !== "classic"}
                       onClick={() => {
-                        if (!form.premium && styleKey !== "classic") {
+                        if (!isPremium && styleKey !== "classic") {
                           alert("Upgrade to DreamTales Unlimited to unlock this story style!");
                           return;
                         }
@@ -1078,13 +1078,13 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                       className={`px-4 py-3 rounded text-sm font-medium transition-all
       ${form.storyStyle === styleKey
                           ? "bg-purple-600 text-white"
-                          : (!form.premium && styleKey !== "classic")
+                          : (!isPremium && styleKey !== "classic")
                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                             : "bg-purple-100 text-purple-800 hover:bg-purple-200"}
     `}
                     >
                       {styleNames[styleKey]}{" "}
-                      {!form.premium && styleKey !== "classic" && (
+                      {!isPremium && styleKey !== "classic" && (
                         <span className="ml-1 text-xs text-yellow-600">(🔒)</span>
                       )}
                     </button>
@@ -1094,7 +1094,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              {!form.premium && (
+              {!isPremium && (
                 <div className="mb-6 mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-center shadow">
                   <p className="text-yellow-800 font-medium">
                     Want longer stories, more styles, and unlimited saves?
@@ -1161,7 +1161,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
             <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 mb-4 font-serif">
               {form.childName}'s {form.historyMode ? 'Historical Adventure' : 'Dream Tale'}
             </h1>
-            {!form.premium && (
+            {!isPremium && (
               <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center shadow">
                 <p className="text-yellow-800 font-medium">
                   You're using the free version of DreamTales. Upgrade to save unlimited stories and unlock premium features!
@@ -1301,7 +1301,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
               <BookOpen className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
-            {!form.premium && (
+            {!isPremium && (
               <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center shadow">
                 <p className="text-yellow-800 font-medium">
                   You're using the free version of DreamTales. Upgrade to save unlimited stories and unlock premium features!
