@@ -48,7 +48,7 @@ const historyPeriods = [
 ];
 
 // Complete Historical data with figures, locations, and focuses for each period
-const historicalData: Record<string, {figures: string[], locations: string[], focuses: string[]}> = {
+const historicalData: Record<string, { figures: string[], locations: string[], focuses: string[] }> = {
   "Ancient Egypt": {
     figures: ["custom", "Cleopatra", "King Tutankhamun", "Nefertiti", "Ramses II", "Hatshepsut", "Akhenaten"],
     locations: ["custom", "Great Pyramids of Giza", "Valley of the Kings", "Temple of Karnak", "Great Sphinx", "Alexandria", "Abu Simbel"],
@@ -448,7 +448,7 @@ const App: React.FC = () => {
 
     // Only destructure the variables you actually use
     const { childName, age, moral, customMoral, universe, customUniverse, characters, length, twist, humor } = form;
-    
+
     if (form.historyMode) {
       if (!childName || !age || !form.historyPeriod) {
         setError("Please complete child's name, age, and historical period to generate the story.");
@@ -460,22 +460,22 @@ const App: React.FC = () => {
         setLoading(false); return;
       }
     }
-    
+
     const finalMoral = moral === "custom" ? customMoral : moral;
     const finalUniverse = universe === "custom" ? customUniverse : universe;
     const finalHistoryPeriod = form.historyPeriod === "custom" ? form.customHistoryPeriod : form.historyPeriod;
-    
+
     let prompt;
 
-if (form.historyMode) {
-  // Declare these variables only when they're needed
-  const finalHistoricalFigure = form.historicalFigure === "custom" ? form.customHistoricalFigure : form.historicalFigure;
-  const finalHistoricalLocation = form.historicalLocation === "custom" ? form.customHistoricalLocation : form.historicalLocation;
-  
-  prompt = `Create an educational historical adventure story for ${childName}, age ${age}, set in ${finalHistoryPeriod}. ${finalHistoricalFigure ? `Include ${finalHistoricalFigure} as a character.` : ""} ${finalHistoricalLocation ? `The story should take place at ${finalHistoricalLocation}.` : ""} Include accurate historical facts and make it engaging for a ${age}-year-old. Length: ${length * 150} words.`;
-} else {
-  prompt = `Create an engaging bedtime story for ${childName}, age ${age}, in the ${finalUniverse} universe. Include lessons about ${finalMoral}. ${characters ? `Featured characters: ${characters}.` : ""} ${twist ? "Include a surprise twist." : ""} ${humor ? "Make it funny." : ""} Length: ${length * 150} words.`;
-}
+    if (form.historyMode) {
+      // Declare these variables only when they're needed
+      const finalHistoricalFigure = form.historicalFigure === "custom" ? form.customHistoricalFigure : form.historicalFigure;
+      const finalHistoricalLocation = form.historicalLocation === "custom" ? form.customHistoricalLocation : form.historicalLocation;
+
+      prompt = `Create an educational historical adventure story for ${childName}, age ${age}, set in ${finalHistoryPeriod}. ${finalHistoricalFigure ? `Include ${finalHistoricalFigure} as a character.` : ""} ${finalHistoricalLocation ? `The story should take place at ${finalHistoricalLocation}.` : ""} Include accurate historical facts and make it engaging for a ${age}-year-old. Length: ${length * 150} words.`;
+    } else {
+      prompt = `Create an engaging bedtime story for ${childName}, age ${age}, in the ${finalUniverse} universe. Include lessons about ${finalMoral}. ${characters ? `Featured characters: ${characters}.` : ""} ${twist ? "Include a surprise twist." : ""} ${humor ? "Make it funny." : ""} Length: ${length * 150} words.`;
+    }
     try {
       const response = await fetch("https://76d8b80e-ce1b-4bcf-b728-c8bb25077088-00-625bmg1jz2gp.picard.replit.dev/generate", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt })
@@ -523,7 +523,28 @@ if (form.historyMode) {
               <Sparkles className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">DreamTales</h1>
-            <p className="text-xl text-gray-600 mb-8">Create magical, personalized bedtime stories for your little ones</p>
+            <p className="text-xl text-gray-600 mb-8">Create magical, personalized bedtime (or anytime) stories for your little ones</p>
+          </div>
+
+          {/* UPGRADE CTA */}
+          <div className="text-center mb-12">
+            <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl shadow-xl p-8 max-w-md mx-auto">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-white rounded-full mb-4">
+                  <Star className="w-6 h-6 text-yellow-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Create Unlimited Stories!</h3>
+                <p className="text-yellow-100 mb-4">Generate as many magical tales as you want with DreamTales Unlimited</p>
+                <a
+                  href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-white text-yellow-600 font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-50 transition-all"
+                >
+                  Upgrade to DreamTales Unlimited
+                </a>
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-center mb-12">
@@ -534,15 +555,15 @@ if (form.historyMode) {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">Create New Profile</h2>
                 <p className="text-gray-600 mb-6">Set up a new profile for your child with their interests, friends, and preferences.</p>
-                <button onClick={() => { 
-                  setForm({ 
-                    childName: "", age: "", moral: "", customMoral: "", universe: "", characters: "", interests: "", 
-                    friends: "", siblings: "", family: "", length: 5, customUniverse: "", notes: "", 
-                    twist: false, humor: false, excludeScary: false, historyMode: false, historyPeriod: "", 
-                    customHistoryPeriod: "", historicalFigure: "", customHistoricalFigure: "", 
-                    historicalLocation: "", customHistoricalLocation: "", educationalFocus: "", savedStories: [] 
-                  }); 
-                  setStep('profile'); 
+                <button onClick={() => {
+                  setForm({
+                    childName: "", age: "", moral: "", customMoral: "", universe: "", characters: "", interests: "",
+                    friends: "", siblings: "", family: "", length: 5, customUniverse: "", notes: "",
+                    twist: false, humor: false, excludeScary: false, historyMode: false, historyPeriod: "",
+                    customHistoryPeriod: "", historicalFigure: "", customHistoricalFigure: "",
+                    historicalLocation: "", customHistoricalLocation: "", educationalFocus: "", savedStories: []
+                  });
+                  setStep('profile');
                 }} className={`${buttonClass} from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600`}>
                   Create Profile
                 </button>
@@ -590,7 +611,7 @@ if (form.historyMode) {
                           </svg>
                         </button>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
@@ -692,9 +713,9 @@ if (form.historyMode) {
 
             <div className="mb-8 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
               <label className="flex items-center mb-4 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={form.historyMode} 
+                <input
+                  type="checkbox"
+                  checked={form.historyMode}
                   onChange={e => {
                     handleChange('historyMode', e.target.checked);
                     if (!e.target.checked) {
@@ -713,9 +734,9 @@ if (form.historyMode) {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-amber-800 mb-2">Historical Period</label>
-                    <select 
+                    <select
                       className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
-                      value={form.historyPeriod} 
+                      value={form.historyPeriod}
                       onChange={e => {
                         handleChange('historyPeriod', e.target.value);
                         handleChange('historicalFigure', '');
@@ -730,14 +751,14 @@ if (form.historyMode) {
 
                   <div>
                     <label className="block text-sm font-medium text-amber-800 mb-2">Historical Figure</label>
-                    <select 
+                    <select
                       className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
-                      value={form.historicalFigure} 
+                      value={form.historicalFigure}
                       onChange={e => handleChange('historicalFigure', e.target.value)}
                       disabled={!form.historyPeriod}
                     >
                       <option value="">Choose a historical person</option>
-                      {getAvailableFigures().map(figure => 
+                      {getAvailableFigures().map(figure =>
                         <option key={figure} value={figure}>{figure}</option>
                       )}
                     </select>
@@ -745,398 +766,436 @@ if (form.historyMode) {
 
                   <div>
                     <label className="block text-sm font-medium text-amber-800 mb-2">Historical Location</label>
-                    <select 
-                      className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg white"
+                    <select
+                      className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
                       value={form.historicalLocation}
                       onChange={e => handleChange('historicalLocation', e.target.value)}
                       disabled={!form.historyPeriod}
-                      >
+                    >
                       <option value="">Choose a historical place</option>
                       {getAvailableLocations().map(location =>
-                      <option key={location} value={location}>{location}</option>
+                        <option key={location} value={location}>{location}</option>
                       )}
-                      </select>
-                      </div>
-               <div>
-                <label className="block text-sm font-medium text-amber-800 mb-2">Educational Focus</label>
-                <select 
-                  className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
-                  value={form.educationalFocus} 
-                  onChange={e => handleChange('educationalFocus', e.target.value)}
-                  disabled={!form.historyPeriod}
-                >
-                  <option value="">What should they learn?</option>
-                  {getAvailableFocuses().map(focus => 
-                    <option key={focus} value={focus}>{focus.charAt(0).toUpperCase() + focus.slice(1)}</option>
-                  )}
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {!form.historyMode && (
-          <>
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Story Moral</label>
-                <select 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  value={form.moral} 
-                  onChange={e => handleChange('moral', e.target.value)}
-                >
-                  {morals.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Story Universe</label>
-                <select 
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                  value={form.universe} 
-                  onChange={e => handleChange('universe', e.target.value)}
-                >
-                  {universes.map(u => <option key={u} value={u}>{u}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Featured Characters</label>
-              <input 
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                placeholder="Which characters should appear in the story?" 
-                value={form.characters} 
-                onChange={e => handleChange('characters', e.target.value)} 
-              />
-            </div>
-          </>
-        )}
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Story Length: {form.length} minute{form.length !== 1 ? 's' : ''} ({form.length * 150} words)
-          </label>
-          <input 
-            type="range" 
-            min="1" 
-            max="15" 
-            value={form.length} 
-            onChange={e => handleChange('length', parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
-            <input 
-              type="checkbox" 
-              checked={form.twist} 
-              onChange={e => handleChange('twist', e.target.checked)}
-              className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-            />
-            <span className="ml-3 text-sm font-medium text-gray-700">Include Surprise Twist</span>
-          </label>
-          <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
-            <input 
-              type="checkbox" 
-              checked={form.humor} 
-              onChange={e => handleChange('humor', e.target.checked)}
-              className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-            />
-            <span className="ml-3 text-sm font-medium text-gray-700">Add Humor</span>
-          </label>
-          <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
-            <input 
-              type="checkbox" 
-              checked={form.excludeScary} 
-              onChange={e => handleChange('excludeScary', e.target.checked)}
-              className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-            />
-            <span className="ml-3 text-sm font-medium text-gray-700">No Scary Parts</span>
-          </label>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <button 
-            onClick={generateStory} 
-            disabled={loading}
-            className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
-          >
-            {loading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                {form.historyMode ? 'Creating Historical Adventure...' : 'Generating Magic...'}
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5 mr-2" />
-                {form.historyMode ? 'Generate Historical Story' : 'Generate Story'}
-              </>
-            )}
-          </button>
-          
-          <button 
-            onClick={() => setStep('home')}
-            className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
-          >
-            Back to Home
-          </button>
-        </div>
-
-        {error && (
-          <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
-            <p className="text-red-600 text-center">{error}</p>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-);
-}
-if (step === 'storyDisplay') {
-return (
-<div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-<div className="absolute inset-0 overflow-hidden">
-<div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-<div className="absolute -bottom-8 -right-4 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-</div>
-<div className="relative z-10 container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-6 shadow-2xl">
-          <BookOpen className="w-10 h-10 text-white" />
-        </div>
-        <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 mb-4 font-serif">
-          {form.childName}'s {form.historyMode ? 'Historical Adventure' : 'Dream Tale'}
-        </h1>
-      </div>
-
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden">
-          <div className="h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500"></div>
-          
-          <div className="p-8 md:p-12">
-            <div className="flex flex-wrap items-center justify-between mb-8 pb-6 border-b border-gray-200">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">{form.childName.charAt(0)}</span>
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-800">Starring {form.childName}</p>
-                  <p className="text-sm text-gray-600">Age {form.age} • {form.historyMode ? 'Educational Adventure' : 'Fantasy Tale'}</p>
-                </div>
-              </div>
-              
-              <div className="flex gap-3 mt-4 md:mt-0">
-                <button 
-                  onClick={shareStory}
-                  className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-lg"
-                >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Share
-                </button>
-                <button 
-                  onClick={downloadStory}
-                  className="flex items-center px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors shadow-lg"
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </button>
-              </div>
-            </div>
-
-            <div className="prose prose-lg max-w-none">
-              <div 
-                className="text-gray-800 leading-relaxed text-lg font-serif whitespace-pre-line"
-                style={{ lineHeight: '1.8' }}
-              >
-                {story}
-              </div>
-            </div>
-
-            <div className="mt-12 pt-8 border-t border-gray-200">
-              <div className="flex items-center justify-center mb-6">
-                <div className="flex items-center text-yellow-500">
-                  <Star className="w-6 h-6 fill-current" />
-                  <Star className="w-6 h-6 fill-current mx-1" />
-                  <Star className="w-6 h-6 fill-current" />
-                </div>
-              </div>
-              
-              <p className="text-center text-gray-600 text-lg font-medium mb-8">
-                {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
-                  onClick={saveStoryToProfile}
-                  className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold text-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                >
-                  <BookOpen className="w-5 h-5 mr-2" />
-                  Save to Library
-                </button>
-                
-                <button 
-                  onClick={() => {
-                    setStory("");
-                    setError("");
-                    setStep('story');
-                  }}
-                  className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Create Another Story
-                </button>
-                
-                <button 
-                  onClick={() => setStep('home')}
-                  className="flex items-center justify-center px-8 py-4 border-2 border-purple-300 text-purple-600 rounded-xl font-semibold text-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200"
-                >
-                  <User className="w-5 h-5 mr-2" />
-                  Back to Home
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {showCopied && (
-      <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
-        Story copied to clipboard!
-      </div>
-    )}
-  </div>
-);
-}
-if (step === 'storyLibrary') {
-return (
-<div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 p-4">
-<div className="max-w-6xl mx-auto">
-<div className="text-center mb-8">
-<div className="inline-flex items-center justify-center w-16 h-16 bg-amber-600 rounded-full mb-4">
-<BookOpen className="w-8 h-8 text-white" />
-</div>
-<h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
-<p className="text-gray-600">{form.savedStories?.length || 0} saved stories</p>
-</div>
-{selectedStory ? (
-        <div className="bg-white rounded-3xl shadow-2xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800">{selectedStory.title}</h2>
-              <p className="text-gray-600">
-                {selectedStory.storyType === 'history' ? `📚 ${selectedStory.historyPeriod}` : `✨ ${selectedStory.universe}`} • 
-                {selectedStory.dateCreated} • {selectedStory.length} min read
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(selectedStory.content);
-                  setShowCopied(true);
-                  setTimeout(() => setShowCopied(false), 2000);
-                }}
-                className="p-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
-              >
-                <Share2 className="w-5 h-5" />
-              </button>
-              <button 
-                onClick={() => {
-                  if (confirm('Delete this story permanently?')) {
-                    deleteStory(selectedStory.id);
-                    setSelectedStory(null);
-                  }
-                }}
-                className="p-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <div className="prose prose-lg max-w-none mb-8">
-            <div className="text-gray-800 leading-relaxed whitespace-pre-line font-serif text-lg">
-              {selectedStory.content}
-            </div>
-          </div>
-
-          <button 
-            onClick={() => setSelectedStory(null)}
-            className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors"
-          >
-            Back to Library
-          </button>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {(form.savedStories || []).map(story => (
-              <div key={story.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer" onClick={() => setSelectedStory(story)}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg text-gray-800 mb-2">{story.title}</h3>
-                    <div className="flex items-center text-sm text-gray-600 mb-2">
-                      {story.storyType === 'history' ? (
-                        <>
-                          <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium mr-2">📚 History</span>
-                          <span>{story.historyPeriod}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium mr-2">✨ Fantasy</span>
-                          <span>{story.universe}</span>
-                        </>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-amber-800 mb-2">Educational Focus</label>
+                    <select
+                      className="w-full px-4 py-3 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all bg-white"
+                      value={form.educationalFocus}
+                      onChange={e => handleChange('educationalFocus', e.target.value)}
+                      disabled={!form.historyPeriod}
+                    >
+                      <option value="">What should they learn?</option>
+                      {getAvailableFocuses().map(focus =>
+                        <option key={focus} value={focus}>{focus.charAt(0).toUpperCase() + focus.slice(1)}</option>
                       )}
-                    </div>
-                    <p className="text-xs text-gray-500">{story.dateCreated} • {story.length} min read</p>
+                    </select>
                   </div>
                 </div>
-                
-                <p className="text-gray-700 text-sm leading-relaxed">
-                  {story.content.substring(0, 150)}...
-                </p>
-                
-                <div className="mt-4 pt-4 border-t border-gray-200">
-                  <button className="text-purple-600 hover:text-purple-800 text-sm font-medium">
-                    Read Full Story →
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              )}
+            </div>
 
-          <div className="text-center">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => setStep('story')}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200"
+            {!form.historyMode && (
+              <>
+                <div className="grid md:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Story Moral</label>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      value={form.moral}
+                      onChange={e => handleChange('moral', e.target.value)}
+                    >
+                      {morals.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Story Universe</label>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                      value={form.universe}
+                      onChange={e => handleChange('universe', e.target.value)}
+                    >
+                      {universes.map(u => <option key={u} value={u}>{u}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Featured Characters</label>
+                  <input
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    placeholder="Which characters should appear in the story?"
+                    value={form.characters}
+                    onChange={e => handleChange('characters', e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Story Length: {form.length} minute{form.length !== 1 ? 's' : ''} ({form.length * 150} words)
+              </label>
+              <input
+                type="range"
+                min="1"
+                max="15"
+                value={form.length}
+                onChange={e => handleChange('length', parseInt(e.target.value))}
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
+                <input
+                  type="checkbox"
+                  checked={form.twist}
+                  onChange={e => handleChange('twist', e.target.checked)}
+                  className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                />
+                <span className="ml-3 text-sm font-medium text-gray-700">Include Surprise Twist</span>
+              </label>
+              <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
+                <input
+                  type="checkbox"
+                  checked={form.humor}
+                  onChange={e => handleChange('humor', e.target.checked)}
+                  className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                />
+                <span className="ml-3 text-sm font-medium text-gray-700">Add Humor</span>
+              </label>
+              <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
+                <input
+                  type="checkbox"
+                  checked={form.excludeScary}
+                  onChange={e => handleChange('excludeScary', e.target.checked)}
+                  className="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                />
+                <span className="ml-3 text-sm font-medium text-gray-700">No Scary Parts</span>
+              </label>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={generateStory}
+                disabled={loading}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
-                <Sparkles className="w-5 h-5 mr-2 inline" />
-                Create New Story
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    {form.historyMode ? 'Creating Historical Adventure...' : 'Generating Magic...'}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    {form.historyMode ? 'Generate Historical Story' : 'Generate Story'}
+                  </>
+                )}
               </button>
-              <button 
+
+              <button
                 onClick={() => setStep('home')}
-                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+                className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
               >
                 Back to Home
               </button>
             </div>
-          </div>
-        </>
-      )}
-    </div>
 
-    {showCopied && (
-      <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
-        Story saved!
+            {error && (
+              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                <p className="text-red-600 text-center">{error}</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    )}
-  </div>
-);
+    );
+  }
+  if (step === 'storyDisplay') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-4 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-8 -right-4 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        </div>
+        <div className="relative z-10 container mx-auto px-4 py-8">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-6 shadow-2xl">
+              <BookOpen className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 mb-4 font-serif">
+              {form.childName}'s {form.historyMode ? 'Historical Adventure' : 'Dream Tale'}
+            </h1>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden">
+              <div className="h-2 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500"></div>
+
+              <div className="p-8 md:p-12">
+                <div className="flex flex-wrap items-center justify-between mb-8 pb-6 border-b border-gray-200">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">{form.childName.charAt(0)}</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">Starring {form.childName}</p>
+                      <p className="text-sm text-gray-600">Age {form.age} • {form.historyMode ? 'Educational Adventure' : 'Fantasy Tale'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-4 md:mt-0">
+                    <button
+                      onClick={shareStory}
+                      className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors shadow-lg"
+                    >
+                      <Share2 className="w-4 h-4 mr-2" />
+                      Share
+                    </button>
+                    <button
+                      onClick={downloadStory}
+                      className="flex items-center px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors shadow-lg"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download
+                    </button>
+                  </div>
+                </div>
+
+                <div className="prose prose-lg max-w-none">
+                  <div
+                    className="text-gray-800 leading-relaxed text-lg font-serif whitespace-pre-line"
+                    style={{ lineHeight: '1.8' }}
+                  >
+                    {story}
+                  </div>
+                </div>
+
+                <div className="mt-12 pt-8 border-t border-gray-200">
+                  <div className="flex items-center justify-center mb-6">
+                    <div className="flex items-center text-yellow-500">
+                      <Star className="w-6 h-6 fill-current" />
+                      <Star className="w-6 h-6 fill-current mx-1" />
+                      <Star className="w-6 h-6 fill-current" />
+                    </div>
+                  </div>
+
+                  <p className="text-center text-gray-600 text-lg font-medium mb-8">
+                    {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
+                  </p>
+                  <p className="text-center text-gray-600 text-lg font-medium mb-8">
+                    {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
+                  </p>
+
+                  {/* UPGRADE CTA */}
+                  <div className="text-center mb-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
+                    <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
+                    <a
+                      href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-yellow-500 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-600 transition-all"
+                    >
+                      Upgrade to DreamTales Unlimited
+                    </a>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button
+                      onClick={saveStoryToProfile}
+                      className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold text-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                    >
+                      <BookOpen className="w-5 h-5 mr-2" />
+                      Save to Library
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setStory("");
+                        setError("");
+                        setStep('story');
+                      }}
+                      className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                    >
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Create Another Story
+                    </button>
+
+                    <button
+                      onClick={() => setStep('home')}
+                      className="flex items-center justify-center px-8 py-4 border-2 border-purple-300 text-purple-600 rounded-xl font-semibold text-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200"
+                    >
+                      <User className="w-5 h-5 mr-2" />
+                      Back to Home
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {
+          showCopied && (
+            <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
+              Story copied to clipboard!
+            </div>
+          )
+        }
+      </div >
+    );
+  }
+  if (step === 'storyLibrary') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 p-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-600 rounded-full mb-4">
+              <BookOpen className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
+            <p className="text-gray-600">{form.savedStories?.length || 0} saved stories</p>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
+          <p className="text-gray-600 mb-4">{form.savedStories?.length || 0} saved stories</p>
+
+          {/* UPGRADE CTA */}
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-4 max-w-md mx-auto mt-4 mb-4">
+            <p className="text-white font-medium mb-2">Want to save unlimited stories?</p>
+            <a
+              href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-white text-yellow-600 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-yellow-50 transition-all text-sm"
+            >
+              Upgrade Now
+            </a>
+          </div>
+
+        </div>
+        {
+          selectedStory ? (
+            <div className="bg-white rounded-3xl shadow-2xl p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">{selectedStory.title}</h2>
+                  <p className="text-gray-600">
+                    {selectedStory.storyType === 'history' ? `📚 ${selectedStory.historyPeriod}` : `✨ ${selectedStory.universe}`} •
+                    {selectedStory.dateCreated} • {selectedStory.length} min read
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedStory.content);
+                      setShowCopied(true);
+                      setTimeout(() => setShowCopied(false), 2000);
+                    }}
+                    className="p-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors"
+                  >
+                    <Share2 className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('Delete this story permanently?')) {
+                        deleteStory(selectedStory.id);
+                        setSelectedStory(null);
+                      }
+                    }}
+                    className="p-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div className="prose prose-lg max-w-none mb-8">
+                <div className="text-gray-800 leading-relaxed whitespace-pre-line font-serif text-lg">
+                  {selectedStory.content}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedStory(null)}
+                className="px-6 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors"
+              >
+                Back to Library
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {(form.savedStories || []).map(story => (
+                  <div key={story.id} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer" onClick={() => setSelectedStory(story)}>
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg text-gray-800 mb-2">{story.title}</h3>
+                        <div className="flex items-center text-sm text-gray-600 mb-2">
+                          {story.storyType === 'history' ? (
+                            <>
+                              <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium mr-2">📚 History</span>
+                              <span>{story.historyPeriod}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium mr-2">✨ Fantasy</span>
+                              <span>{story.universe}</span>
+                            </>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">{story.dateCreated} • {story.length} min read</p>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {story.content.substring(0, 150)}...
+                    </p>
+
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <button className="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                        Read Full Story →
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={() => setStep('story')}
+                    className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2 inline" />
+                    Create New Story
+                  </button>
+                  <button
+                    onClick={() => setStep('home')}
+                    className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+                  >
+                    Back to Home
+                  </button>
+                </div>
+              </div>
+            </>
+          )
+        }
+      </div >
+
+  {
+      showCopied && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
+          Story saved!
+        </div>
+      )
+    }
+    </div >
+  );
 }
 return null;
 };
