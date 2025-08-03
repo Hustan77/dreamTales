@@ -379,13 +379,6 @@ const App: React.FC = () => {
       if (key === "parentEmail" && typeof value === "string") {
         setTimeout(() => checkPremium(), 100); // Check after typing stops
       }
-      if (updated.childName) {
-        const updatedProfiles = { ...profiles, [updated.childName]: updated };
-        localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
-        localStorage.setItem("lastProfile", updated.childName);
-        setProfiles(updatedProfiles);
-        setSelectedProfile(updated.childName);
-      }
       return updated;
     });
   }, [profiles]);
@@ -500,9 +493,9 @@ const App: React.FC = () => {
       const finalHistoricalFigure = form.historicalFigure === "custom" ? form.customHistoricalFigure : form.historicalFigure;
       const finalHistoricalLocation = form.historicalLocation === "custom" ? form.customHistoricalLocation : form.historicalLocation;
 
-      prompt = `Create an educational historical adventure story for ${childName}, age ${age}, set in ${finalHistoryPeriod}. ${finalHistoricalFigure ? `Include ${finalHistoricalFigure} as a character.` : ""} ${finalHistoricalLocation ? `The story should take place at ${finalHistoricalLocation}.` : ""} Include accurate historical facts and make it engaging for a ${age}-year-old. Length: ${length * 150} words.`;
+      prompt = `Write an educational, exciting historical adventure for a child named ${childName}, age ${age}, set in the time of ${finalHistoryPeriod}.${finalHistoricalFigure ? ` Include ${finalHistoricalFigure} as a major character.` : ""}${finalHistoricalLocation ? ` Set the story in ${finalHistoricalLocation}.` : ""}${form.educationalFocus ? ` Focus on teaching about ${form.educationalFocus}.` : ""} The story must be filled with adventure and suspense, but also include real facts and cultural detail appropriate for kids. Begin with a hook, build to a climax, and end with a resolution. Total word count: ${length * 150}.`;
     } else {
-      prompt = `Create an engaging bedtime story for ${childName}, age ${age}, in the ${finalUniverse} universe. Include lessons about ${finalMoral}. ${characters ? `Featured characters: ${characters}.` : ""} ${twist ? "Include a surprise twist." : ""} ${humor ? "Make it funny." : ""} Length: ${length * 150} words.`;
+      prompt = `Create a vivid, magical, and adventurous story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. Make it emotionally engaging, filled with imagination and wonder. The story should include important lessons about ${finalMoral}.${characters ? ` Include these characters: ${characters}.` : ""}${twist ? " Include a clever plot twist." : ""}${humor ? " Add gentle humor appropriate for kids." : ""} Make the story complete from beginning to end with a dramatic arc, emotional stakes, and a satisfying resolution. The moral must be clearly conveyed. Total word count: ${length * 150}.`;
     }
     try {
       const response = await fetch("https://76d8b80e-ce1b-4bcf-b728-c8bb25077088-00-625bmg1jz2gp.picard.replit.dev/generate", {
@@ -724,7 +717,19 @@ const App: React.FC = () => {
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Parent Notes</label><textarea className={`${inputClass} h-20 resize-none`} placeholder="Any special instructions or preferences?" value={form.notes} onChange={e => handleChange("notes", e.target.value)} /></div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={() => setStep('story')} className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg">Save Profile & Continue</button>
+              <button
+                onClick={() => {
+                  const updatedProfiles = { ...profiles, [form.childName]: form };
+                  setProfiles(updatedProfiles);
+                  localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
+                  localStorage.setItem("lastProfile", form.childName);
+                  setSelectedProfile(form.childName);
+                  setStep('story');
+                }}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              >
+                Save Profile & Continue
+              </button>
               <button onClick={() => setStep('home')} className="px-6 py-4 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:bg-gray-50 transition-all duration-200">Back to Home</button>
             </div>
           </div>
@@ -1045,10 +1050,6 @@ const App: React.FC = () => {
                   <p className="text-center text-gray-600 text-lg font-medium mb-8">
                     {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
                   </p>
-                  <p className="text-center text-gray-600 text-lg font-medium mb-8">
-                    {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
-                  </p>
-
                   {!isPremium && (
                     <div className="text-center mb-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
                       <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
@@ -1062,15 +1063,6 @@ const App: React.FC = () => {
                       </a>
                     </div>
                   )}
-                  <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
-                  <a
-                    href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-yellow-500 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-600 transition-all"
-                  >
-                    Upgrade to DreamTales Unlimited
-                  </a>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
