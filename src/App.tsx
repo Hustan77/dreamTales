@@ -333,6 +333,8 @@ interface FormData {
   customHistoricalLocation: string;
   educationalFocus: string;
   savedStories?: SavedStory[];
+  premium?: boolean; // true if subscribed, false/undefined if free
+  parentEmail?: string;
 }
 
 const App: React.FC = () => {
@@ -343,12 +345,13 @@ const App: React.FC = () => {
     twist: false, humor: false, excludeScary: false,
     historyMode: false, historyPeriod: "", customHistoryPeriod: "", historicalFigure: "",
     customHistoricalFigure: "", historicalLocation: "", customHistoricalLocation: "", educationalFocus: "",
-    savedStories: []
+    savedStories: [], premium: false
   });
 
   const [story, setStory] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [isPremium, setIsPremium] = useState(false);
   const [showCopied, setShowCopied] = useState<boolean>(false);
   const [selectedStory, setSelectedStory] = useState<SavedStory | null>(null);
 
@@ -359,10 +362,10 @@ const App: React.FC = () => {
       const parsed = JSON.parse(saved);
       // Ensure all profiles have savedStories arrays
       Object.keys(parsed).forEach(key => {
-        if (!parsed[key].savedStories) {
-          parsed[key].savedStories = [];
-        }
+        if (!parsed[key].savedStories) parsed[key].savedStories = [];
+        if (typeof parsed[key].premium === 'undefined') parsed[key].premium = false; // ⬅️ Add this
       });
+
       return parsed;
     }
     return {};
@@ -373,6 +376,9 @@ const App: React.FC = () => {
   const handleChange = useCallback((key: keyof FormData, value: string | number | boolean) => {
     setForm(prev => {
       const updated = { ...prev, [key]: value };
+      if (key === "parentEmail" && typeof value === "string") {
+        setTimeout(() => checkPremium(), 100); // Check after typing stops
+      }
       if (updated.childName) {
         const updatedProfiles = { ...profiles, [updated.childName]: updated };
         localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
@@ -403,6 +409,10 @@ const App: React.FC = () => {
   };
 
   const saveStoryToProfile = () => {
+    if (!form.premium && (form.savedStories?.length || 0) >= 3) {
+      alert("You've reached the limit of 3 saved stories. Upgrade to DreamTales Unlimited to save more!");
+      return;
+    }
     if (!story || !form.childName) return;
 
     const newStory: SavedStory = {
@@ -442,13 +452,31 @@ const App: React.FC = () => {
     setProfiles(updatedProfiles);
     localStorage.setItem("profiles", JSON.stringify(updatedProfiles));
   };
+  const checkPremium = async () => {
+    try {
+      const res = await fetch("https://76d8b80e-ce1b-4bcf-b728-c8bb25077088-00-625bmg1jz2gp.picard.replit.dev/check-premium", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.parentEmail })
+      });
+      const data = await res.json();
+      setIsPremium(data.premium);
+    } catch (err) {
+      console.error("Error checking premium status:", err);
+      setIsPremium(false);
+    }
+  };
 
   const generateStory = async (): Promise<void> => {
     setLoading(true); setError(""); setStory("");
 
     // Only destructure the variables you actually use
     const { childName, age, moral, customMoral, universe, customUniverse, characters, length, twist, humor } = form;
-
+    if (!isPremium && (form.savedStories?.length || 0) >= 3) {
+      setError("You’ve reached your free story limit. Upgrade to DreamTales Unlimited to save more.");
+      setLoading(false);
+      return;
+    }
     if (form.historyMode) {
       if (!childName || !age || !form.historyPeriod) {
         setError("Please complete child's name, age, and historical period to generate the story.");
@@ -679,6 +707,15 @@ const App: React.FC = () => {
 
           <div className="space-y-6">
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Child's Name</label><input className={inputClass} placeholder="Enter your child's name" value={form.childName} onChange={e => handleChange("childName", e.target.value)} /></div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Parent's Email</label>
+              <input
+                className={inputClass}
+                placeholder="Enter your email (to unlock premium)"
+                value={form.parentEmail || ""}
+                onChange={e => handleChange("parentEmail", e.target.value)}
+              />
+            </div>
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Age</label><input className={inputClass} placeholder="How old are they?" value={form.age} onChange={e => handleChange("age", e.target.value)} /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Interests & Hobbies</label><textarea className={`${inputClass} h-20 resize-none`} placeholder="What does your child love? (sports, animals, music, etc.)" value={form.interests} onChange={e => handleChange("interests", e.target.value)} /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-2">Friends</label><textarea className={`${inputClass} h-20 resize-none`} placeholder="Tell us about their friends" value={form.friends} onChange={e => handleChange("friends", e.target.value)} /></div>
@@ -709,6 +746,11 @@ const App: React.FC = () => {
                 DreamTales Story Generator
               </h1>
               <p className="text-gray-600">Creating magical stories for {form.childName}</p>
+              {isPremium && (
+                <div className="mt-2 inline-flex items-center px-4 py-1 bg-yellow-100 border border-yellow-300 text-yellow-800 text-sm font-semibold rounded-full shadow-sm">
+                  🌟 Premium Unlocked
+                </div>
+              )}
             </div>
 
             <div className="mb-8 p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
@@ -930,6 +972,22 @@ const App: React.FC = () => {
             <h1 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 mb-4 font-serif">
               {form.childName}'s {form.historyMode ? 'Historical Adventure' : 'Dream Tale'}
             </h1>
+            {!form.premium && (
+              <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center shadow">
+                <p className="text-yellow-800 font-medium">
+                  You're using the free version of DreamTales. Upgrade to save unlimited stories and unlock premium features!
+                </p>
+                <a
+                  href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition"
+                >
+                  Upgrade to DreamTales Unlimited
+                </a>
+              </div>
+            )}
+
           </div>
 
           <div className="max-w-4xl mx-auto">
@@ -991,63 +1049,73 @@ const App: React.FC = () => {
                     {form.historyMode ? `Great learning adventure, ${form.childName}!` : `Sweet dreams, ${form.childName}!`}
                   </p>
 
-                  {/* UPGRADE CTA */}
-                  <div className="text-center mb-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
-                    <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
-                    <a
-                      href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block bg-yellow-500 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-600 transition-all"
-                    >
-                      Upgrade to DreamTales Unlimited
-                    </a>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button
-                      onClick={saveStoryToProfile}
-                      className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold text-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                    >
-                      <BookOpen className="w-5 h-5 mr-2" />
-                      Save to Library
-                    </button>
+                  {!isPremium && (
+                    <div className="text-center mb-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
+                      <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
+                      <a
+                        href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block bg-yellow-500 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-600 transition-all"
+                      >
+                        Upgrade to DreamTales Unlimited
+                      </a>
+                    </div>
+                  )}
+                  <p className="text-gray-700 mb-4">Love this story? Create unlimited tales for {form.childName}!</p>
+                  <a
+                    href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-yellow-500 text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-yellow-600 transition-all"
+                  >
+                    Upgrade to DreamTales Unlimited
+                  </a>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <button
+                    onClick={saveStoryToProfile}
+                    className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl font-semibold text-lg hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                  >
+                    <BookOpen className="w-5 h-5 mr-2" />
+                    Save to Library
+                  </button>
 
-                    <button
-                      onClick={() => {
-                        setStory("");
-                        setError("");
-                        setStep('story');
-                      }}
-                      className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
-                    >
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      Create Another Story
-                    </button>
+                  <button
+                    onClick={() => {
+                      setStory("");
+                      setError("");
+                      setStep('story');
+                    }}
+                    className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold text-lg hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Create Another Story
+                  </button>
 
-                    <button
-                      onClick={() => setStep('home')}
-                      className="flex items-center justify-center px-8 py-4 border-2 border-purple-300 text-purple-600 rounded-xl font-semibold text-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200"
-                    >
-                      <User className="w-5 h-5 mr-2" />
-                      Back to Home
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setStep('home')}
+                    className="flex items-center justify-center px-8 py-4 border-2 border-purple-300 text-purple-600 rounded-xl font-semibold text-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200"
+                  >
+                    <User className="w-5 h-5 mr-2" />
+                    Back to Home
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {showCopied && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
+            Story copied to clipboard!
+          </div>
+        )}
 
-        {
-          showCopied && (
-            <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
-              Story copied to clipboard!
-            </div>
-          )
-        }
-      </div >
+      </div>
+
     );
   }
+
   if (step === 'storyLibrary') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-100 via-orange-50 to-yellow-100 p-4">
@@ -1057,6 +1125,22 @@ const App: React.FC = () => {
               <BookOpen className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
+            {!form.premium && (
+              <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center shadow">
+                <p className="text-yellow-800 font-medium">
+                  You're using the free version of DreamTales. Upgrade to save unlimited stories and unlock premium features!
+                </p>
+                <a
+                  href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition"
+                >
+                  Upgrade to DreamTales Unlimited
+                </a>
+              </div>
+            )}
+
             <p className="text-gray-600">{form.savedStories?.length || 0} saved stories</p>
           </div>
           {/* UPGRADE CTA */}
