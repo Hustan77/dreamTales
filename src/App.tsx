@@ -34,6 +34,19 @@ const morals = [
   "Anti-Bullying", "Standing Up for Others", "Celebrating Differences", "Cultural Awareness"
 ];
 
+const stylePrompts: Record<string, string> = {
+  classic: "",
+  pirate: `Tell the story like a thrilling pirate’s yarn, using colorful pirate slang, sea monsters, treasure maps, and swashbuckling action. Include iconic pirate tropes and nautical lingo like "Ahoy!", "Arrr!", and "shiver me timbers." Use an old sea captain’s voice.`,
+  play: `Format the story like a Broadway musical play. Use a dramatic narrator, character names in bold, short stage directions (e.g., [lights dim]), and lyrical rhyming dialogue that feels like it's sung. Channel the energy of Hamilton or Wicked.`,
+  hiphop: `Tell the story entirely as a rhythmic rap, with clever rhymes and a beat-driven flow. Make the story bounce with energy and rhyme schemes. Keep it smart and playful — like if Lin-Manuel Miranda wrote a bedtime story with beats.`,
+  shakespeare: `Craft the story as a Shakespearean drama, using iambic pentameter and Elizabethan English. Use dramatic soliloquies, courtly language, and archaic expressions like "thee," "thou," and "hath." Think: bedtime Macbeth (but without the violence).`,
+  cowboy: `Spin the story like a Wild West campfire tale told by an old cowboy. Use dusty, twangy narration, saloon metaphors, and frontier slang. Include horses, outlaws, and tumbleweeds, and speak like you’re wearing spurs and chewing straw.`,
+  noir: `Tell the story in the gritty, smoky style of 1940s detective noir. Use hardboiled inner monologue, moody city settings, and lines like “It was a night like any other, until she walked in.” Think: bedtime story meets film noir.`,
+  fairytale: `Write the story in the whimsical tone of a classic European fairy tale. Use enchanted forests, wise old animals, and mystical rhymes. Add a narrator with a “Once upon a time” voice, and use poetic and magical language throughout.`,
+  newsreport: `Write the story like a breaking news special on a magical news network. Use news anchors, reporters on the scene, and dramatic headlines. Mix in humor and seriousness, like a story unfolding live on TV in a fantasy world.`,
+  alien: `Tell the story like it’s being broadcast by friendly aliens to Earth kids. Use sci-fi language, alien expressions, galactic metaphors, and space references. Let it feel like an interplanetary adventure being narrated from another world.`,
+};
+
 const storyStyles = [
   { id: "classic", label: "✨ Classic", premium: false },
   { id: "pirate", label: "🏴‍☠️ Pirate’s Tale", premium: true },
@@ -44,6 +57,17 @@ const storyStyles = [
   { id: "sci-fi", label: "👽 Sci-Fi Space Opera", premium: true },
   { id: "detective", label: "🕵️‍♂️ Mystery Detective", premium: true }
 ];
+
+const styleNames: Record<string, string> = {
+  classic: "Classic",
+  pirate: "Swashbuckler",
+  play: "Broadway Musical",
+  hiphop: "Hip-Hop Rhymes",
+  shakespeare: "Shakespearean Drama",
+  cowboy: "Cowboy Campfire",
+  fairytale: "Fairy Tale",
+  movie: "Movie Broadcast",
+};
 
 const historyPeriods = [
   "custom", "Ancient Egypt", "Ancient Greece", "Roman Empire", "Medieval Times", "Renaissance",
@@ -497,21 +521,9 @@ const App: React.FC = () => {
     const finalMoral = moral === "custom" ? customMoral : moral;
     const finalUniverse = universe === "custom" ? customUniverse : universe;
     const finalHistoryPeriod = form.historyPeriod === "custom" ? form.customHistoryPeriod : form.historyPeriod;
-
     let prompt;
+    if (!isPremium && form.storyStyle !== "classic") form.storyStyle = "classic";
     const style = form.storyStyle || "classic";
-    const stylePrompts: Record<string, string> = {
-      classic: "",
-      pirate: `Tell the story like a thrilling pirate’s yarn, using colorful pirate slang, sea monsters, treasure maps, and swashbuckling action. Include iconic pirate tropes and nautical lingo like "Ahoy!", "Arrr!", and "shiver me timbers." Use an old sea captain’s voice.`,
-      play: `Format the story like a Broadway musical play. Use a dramatic narrator, character names in bold, short stage directions (e.g., [lights dim]), and lyrical rhyming dialogue that feels like it's sung. Channel the energy of Hamilton or Wicked.`,
-      hiphop: `Tell the story entirely as a rhythmic rap, with clever rhymes and a beat-driven flow. Make the story bounce with energy and rhyme schemes. Keep it smart and playful — like if Lin-Manuel Miranda wrote a bedtime story with beats.`,
-      shakespeare: `Craft the story as a Shakespearean drama, using iambic pentameter and Elizabethan English. Use dramatic soliloquies, courtly language, and archaic expressions like "thee," "thou," and "hath." Think: bedtime Macbeth (but without the violence).`,
-      cowboy: `Spin the story like a Wild West campfire tale told by an old cowboy. Use dusty, twangy narration, saloon metaphors, and frontier slang. Include horses, outlaws, and tumbleweeds, and speak like you’re wearing spurs and chewing straw.`,
-      noir: `Tell the story in the gritty, smoky style of 1940s detective noir. Use hardboiled inner monologue, moody city settings, and lines like “It was a night like any other, until she walked in.” Think: bedtime story meets film noir.`,
-      fairytale: `Write the story in the whimsical tone of a classic European fairy tale. Use enchanted forests, wise old animals, and mystical rhymes. Add a narrator with a “Once upon a time” voice, and use poetic and magical language throughout.`,
-      newsreport: `Write the story like a breaking news special on a magical news network. Use news anchors, reporters on the scene, and dramatic headlines. Mix in humor and seriousness, like a story unfolding live on TV in a fantasy world.`,
-      alien: `Tell the story like it’s being broadcast by friendly aliens to Earth kids. Use sci-fi language, alien expressions, galactic metaphors, and space references. Let it feel like an interplanetary adventure being narrated from another world.`,
-    };
 
     if (form.historyMode) {
       // Declare these variables only when they're needed
@@ -807,6 +819,22 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
       <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8">
+            {!form.premium && (
+              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-center shadow">
+                <p className="text-yellow-800 font-medium">
+                  You're using the free version of DreamTales. Upgrade to unlock unlimited stories, longer adventures, and immersive writing styles!
+                </p>
+                <a
+                  href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition"
+                >
+                  Upgrade to DreamTales Unlimited
+                </a>
+              </div>
+            )}
+
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-full mb-4">
                 <Sparkles className="w-8 h-8 text-white" />
@@ -928,7 +956,20 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                       value={form.universe}
                       onChange={e => handleChange('universe', e.target.value)}
                     >
-                      {universes.map(u => <option key={u} value={u}>{u}</option>)}
+                      {universes.map((u) => {
+                        const isPremium = !["custom", "Harry Potter", "Frozen", "Pokemon"].includes(u); // Free options only
+                        const disabled = isPremium && !form.premium;
+
+                        return (
+                          <option
+                            key={u}
+                            value={u}
+                            disabled={disabled}
+                          >
+                            {u} {isPremium ? (form.premium ? "✨" : "🔒") : ""}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
                 </div>
@@ -952,11 +993,17 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
               <input
                 type="range"
                 min="1"
-                max="15"
+                max={form.premium ? 15 : 5}
                 value={form.length}
                 onChange={e => handleChange('length', parseInt(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
+              {!form.premium && form.length > 5 && (
+                <p className="text-red-500 text-sm mt-2">
+                  🔒 Story length is limited to 5 minutes in the free version. Upgrade to unlock longer adventures!
+                </p>
+              )}
+
             </div>
             {/* ✨ Story Style Selector */}
             <div className="mb-8">
@@ -1014,8 +1061,56 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                 <span className="ml-3 text-sm font-medium text-gray-700">No Scary Parts</span>
               </label>
             </div>
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Story Style</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                {Object.keys(stylePrompts).map((styleKey) => {
+                  return (
+                    <button
+                      key={styleKey}
+                      disabled={!form.premium && styleKey !== "classic"}
+                      onClick={() => {
+                        if (!form.premium && styleKey !== "classic") {
+                          alert("Upgrade to DreamTales Unlimited to unlock this story style!");
+                          return;
+                        }
+                        handleChange("storyStyle", styleKey);
+                      }}
+                      className={`px-4 py-3 rounded text-sm font-medium transition-all
+      ${form.storyStyle === styleKey
+                          ? "bg-purple-600 text-white"
+                          : (!form.premium && styleKey !== "classic")
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-purple-100 text-purple-800 hover:bg-purple-200"}
+    `}
+                    >
+                      {styleNames[styleKey]}{" "}
+                      {!form.premium && styleKey !== "classic" && (
+                        <span className="ml-1 text-xs text-yellow-600">(🔒)</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
+              {!form.premium && (
+                <div className="mb-6 mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-center shadow">
+                  <p className="text-yellow-800 font-medium">
+                    Want longer stories, more styles, and unlimited saves?
+                  </p>
+                  <a
+                    href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mt-3 bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition"
+                  >
+                    Upgrade to DreamTales Unlimited
+                  </a>
+                </div>
+              )}
+
               <button
                 onClick={generateStory}
                 disabled={loading}
