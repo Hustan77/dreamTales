@@ -502,11 +502,15 @@ const App: React.FC = () => {
     const style = form.storyStyle || "classic";
     const stylePrompts: Record<string, string> = {
       classic: "",
-      pirate: "Write the story as if it's being told by a lively pirate. Use sea-worthy language and pirate slang.",
-      play: "Format the story like a Broadway-style musical play with character dialogue and stage direction. Think Hamilton.",
-      hiphop: "Tell the story in the style of a rhyming hip hop rap, keeping it educational and fun for kids.",
-      shakespeare: "Write the story in the style of a Shakespearean play, using old-fashioned language and dramatic flair.",
-      cowboy: "Tell the story like a wild west cowboy tale, full of frontier spirit and country charm.",
+      pirate: `Tell the story like a thrilling pirate’s yarn, using colorful pirate slang, sea monsters, treasure maps, and swashbuckling action. Include iconic pirate tropes and nautical lingo like "Ahoy!", "Arrr!", and "shiver me timbers." Use an old sea captain’s voice.`,
+      play: `Format the story like a Broadway musical play. Use a dramatic narrator, character names in bold, short stage directions (e.g., [lights dim]), and lyrical rhyming dialogue that feels like it's sung. Channel the energy of Hamilton or Wicked.`,
+      hiphop: `Tell the story entirely as a rhythmic rap, with clever rhymes and a beat-driven flow. Make the story bounce with energy and rhyme schemes. Keep it smart and playful — like if Lin-Manuel Miranda wrote a bedtime story with beats.`,
+      shakespeare: `Craft the story as a Shakespearean drama, using iambic pentameter and Elizabethan English. Use dramatic soliloquies, courtly language, and archaic expressions like "thee," "thou," and "hath." Think: bedtime Macbeth (but without the violence).`,
+      cowboy: `Spin the story like a Wild West campfire tale told by an old cowboy. Use dusty, twangy narration, saloon metaphors, and frontier slang. Include horses, outlaws, and tumbleweeds, and speak like you’re wearing spurs and chewing straw.`,
+      noir: `Tell the story in the gritty, smoky style of 1940s detective noir. Use hardboiled inner monologue, moody city settings, and lines like “It was a night like any other, until she walked in.” Think: bedtime story meets film noir.`,
+      fairytale: `Write the story in the whimsical tone of a classic European fairy tale. Use enchanted forests, wise old animals, and mystical rhymes. Add a narrator with a “Once upon a time” voice, and use poetic and magical language throughout.`,
+      newsreport: `Write the story like a breaking news special on a magical news network. Use news anchors, reporters on the scene, and dramatic headlines. Mix in humor and seriousness, like a story unfolding live on TV in a fantasy world.`,
+      alien: `Tell the story like it’s being broadcast by friendly aliens to Earth kids. Use sci-fi language, alien expressions, galactic metaphors, and space references. Let it feel like an interplanetary adventure being narrated from another world.`,
     };
 
     if (form.historyMode) {
@@ -535,7 +539,8 @@ The tone should be adventurous, thoughtful, and emotionally engaging. Do not tal
       }
 
     } else {
-      prompt = `Create an immersive, high-quality bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. The story should include vivid references to well-known characters, settings, and lore from the ${finalUniverse} world.
+      prompt = `${stylePrompts[style]}      
+Create an immersive, high-quality bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. The story should include vivid references to well-known characters, settings, and lore from the ${finalUniverse} world.
 
 Theme: Teach the moral of ${finalMoral} in a natural and meaningful way through the character's journey. 
 
