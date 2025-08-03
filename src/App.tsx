@@ -957,8 +957,8 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                       onChange={e => handleChange('universe', e.target.value)}
                     >
                       {universes.map((u) => {
-                        const isPremium = !["custom", "Harry Potter", "Frozen", "Pokemon"].includes(u); // Free options only
-                        const disabled = !form.premium;
+                        const isPremiumUniverse = !["custom", "Harry Potter", "Frozen", "Pokemon"].includes(u);
+                        const disabled = isPremiumUniverse && !form.premium;
 
                         return (
                           <option
@@ -966,7 +966,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                             value={u}
                             disabled={disabled}
                           >
-                            {u} {isPremium ? (form.premium ? "✨" : "🔒") : ""}
+                            {u} {isPremiumUniverse ? (form.premium ? "✨" : "🔒") : ""}
                           </option>
                         );
                       })}
