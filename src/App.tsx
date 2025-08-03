@@ -363,7 +363,7 @@ const App: React.FC = () => {
   const [story, setStory] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(true); // TEMP for testing styles
   const [showCopied, setShowCopied] = useState<boolean>(false);
   const [selectedStory, setSelectedStory] = useState<SavedStory | null>(null);
 
