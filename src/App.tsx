@@ -958,7 +958,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                     >
                       {universes.map((u) => {
                         const isPremium = !["custom", "Harry Potter", "Frozen", "Pokemon"].includes(u); // Free options only
-                        const disabled = isPremium && !form.premium;
+                        const disabled = !form.premium;
 
                         return (
                           <option
@@ -1013,7 +1013,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                 value={form.storyStyle || "classic"}
                 onChange={e => {
                   const style = e.target.value;
-                  if (!isPremium && style !== "classic") {
+                  if (!form.premium && style !== "classic") {
                     alert("Upgrade to DreamTales Unlimited to unlock premium story styles!");
                     return;
                   }
@@ -1024,8 +1024,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                   <option
                     key={style.id}
                     value={style.id}
-                    disabled={!isPremium && style.premium}
-                  >
+                    disabled={!form.premium && style.premium}                  >
                     {style.label} {style.premium && !isPremium ? "🔒" : ""}
                   </option>
                 ))}
