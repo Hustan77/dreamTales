@@ -1059,9 +1059,6 @@ const App: React.FC = () => {
             <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
             <p className="text-gray-600">{form.savedStories?.length || 0} saved stories</p>
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">{form.childName}'s Story Library</h1>
-          <p className="text-gray-600 mb-4">{form.savedStories?.length || 0} saved stories</p>
-
           {/* UPGRADE CTA */}
           <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl p-4 max-w-md mx-auto mt-4 mb-4">
             <p className="text-white font-medium mb-2">Want to save unlimited stories?</p>
@@ -1185,18 +1182,11 @@ const App: React.FC = () => {
             </>
           )
         }
-      </div >
+      </div>
+    );
+  }
 
-  {
-      showCopied && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
-          Story saved!
-        </div>
-      )
-    }
-    </div >
-  );
-}
-return null;
+  return null;
 };
+
 export default App;
