@@ -47,16 +47,6 @@ const stylePrompts: Record<string, string> = {
   alien: `Tell the story like it’s being broadcast by friendly aliens to Earth kids. Use sci-fi language, alien expressions, galactic metaphors, and space references. Let it feel like an interplanetary adventure being narrated from another world.`,
 };
 
-const storyStyles = [
-  { id: "classic", label: "✨ Classic", premium: false },
-  { id: "pirate", label: "🏴‍☠️ Pirate’s Tale", premium: true },
-  { id: "musical", label: "🎵 Broadway Musical", premium: true },
-  { id: "shakespeare", label: "🎭 Shakespearean Drama", premium: true },
-  { id: "hiphop", label: "🎤 Hip-Hop Rhymes", premium: true },
-  { id: "silly", label: "🤣 Silly Goofy Style", premium: true },
-  { id: "sci-fi", label: "👽 Sci-Fi Space Opera", premium: true },
-  { id: "detective", label: "🕵️‍♂️ Mystery Detective", premium: true }
-];
 
 const styleNames: Record<string, string> = {
   classic: "Classic",
@@ -1006,30 +996,6 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
 
             </div>
             {/* ✨ Story Style Selector */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Story Style</label>
-              <select
-                className={inputClass}
-                value={form.storyStyle || "classic"}
-                onChange={e => {
-                  const style = e.target.value;
-                  if (!isPremium && style !== "classic") {
-                    alert("Upgrade to DreamTales Unlimited to unlock premium story styles!");
-                    return;
-                  }
-                  handleChange("storyStyle", style);
-                }}
-              >
-                {storyStyles.map(style => (
-                  <option
-                    key={style.id}
-                    value={style.id}
-                    disabled={!isPremium && style.premium}                  >
-                    {style.label} {style.premium && !isPremium ? "🔒" : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               <label className="flex items-center p-4 border border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-all">
@@ -1083,7 +1049,7 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                             : "bg-purple-100 text-purple-800 hover:bg-purple-200"}
     `}
                     >
-                      {styleNames[styleKey]}{" "}
+                      {styleNames[styleKey] || styleKey}{" "}
                       {!isPremium && styleKey !== "classic" && (
                         <span className="ml-1 text-xs text-yellow-600">(🔒)</span>
                       )}
