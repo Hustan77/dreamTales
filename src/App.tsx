@@ -34,6 +34,17 @@ const morals = [
   "Anti-Bullying", "Standing Up for Others", "Celebrating Differences", "Cultural Awareness"
 ];
 
+const storyStyles = [
+  { id: "classic", label: "✨ Classic", premium: false },
+  { id: "pirate", label: "🏴‍☠️ Pirate’s Tale", premium: true },
+  { id: "musical", label: "🎵 Broadway Musical", premium: true },
+  { id: "shakespeare", label: "🎭 Shakespearean Drama", premium: true },
+  { id: "hiphop", label: "🎤 Hip-Hop Rhymes", premium: true },
+  { id: "silly", label: "🤣 Silly Goofy Style", premium: true },
+  { id: "sci-fi", label: "👽 Sci-Fi Space Opera", premium: true },
+  { id: "detective", label: "🕵️‍♂️ Mystery Detective", premium: true }
+];
+
 const historyPeriods = [
   "custom", "Ancient Egypt", "Ancient Greece", "Roman Empire", "Medieval Times", "Renaissance",
   "Age of Exploration", "Colonial America", "American Revolution", "Wild West", "Civil War Era",
@@ -319,6 +330,7 @@ interface FormData {
   siblings: string;
   family: string;
   length: number;
+  storyStyle: string;
   customUniverse: string;
   notes: string;
   twist: boolean;
@@ -343,7 +355,7 @@ const App: React.FC = () => {
     childName: "", age: "", moral: "", customMoral: "", universe: "", characters: "", interests: "",
     friends: "", siblings: "", family: "", length: 5, customUniverse: "", notes: "",
     twist: false, humor: false, excludeScary: false,
-    historyMode: false, historyPeriod: "", customHistoryPeriod: "", historicalFigure: "",
+    historyMode: false, historyPeriod: "", customHistoryPeriod: "", historicalFigure: "", storyStyle: "classic",
     customHistoricalFigure: "", historicalLocation: "", customHistoricalLocation: "", educationalFocus: "",
     savedStories: [], premium: false
   });
@@ -487,15 +499,62 @@ const App: React.FC = () => {
     const finalHistoryPeriod = form.historyPeriod === "custom" ? form.customHistoryPeriod : form.historyPeriod;
 
     let prompt;
+    const style = form.storyStyle || "classic";
+    const stylePrompts: Record<string, string> = {
+      classic: "",
+      pirate: "Write the story as if it's being told by a lively pirate. Use sea-worthy language and pirate slang.",
+      play: "Format the story like a Broadway-style musical play with character dialogue and stage direction. Think Hamilton.",
+      hiphop: "Tell the story in the style of a rhyming hip hop rap, keeping it educational and fun for kids.",
+      shakespeare: "Write the story in the style of a Shakespearean play, using old-fashioned language and dramatic flair.",
+      cowboy: "Tell the story like a wild west cowboy tale, full of frontier spirit and country charm.",
+    };
 
     if (form.historyMode) {
       // Declare these variables only when they're needed
       const finalHistoricalFigure = form.historicalFigure === "custom" ? form.customHistoricalFigure : form.historicalFigure;
       const finalHistoricalLocation = form.historicalLocation === "custom" ? form.customHistoricalLocation : form.historicalLocation;
 
-      prompt = `Write an educational, exciting historical adventure for a child named ${childName}, age ${age}, set in the time of ${finalHistoryPeriod}.${finalHistoricalFigure ? ` Include ${finalHistoricalFigure} as a major character.` : ""}${finalHistoricalLocation ? ` Set the story in ${finalHistoricalLocation}.` : ""}${form.educationalFocus ? ` Focus on teaching about ${form.educationalFocus}.` : ""} The story must be filled with adventure and suspense, but also include real facts and cultural detail appropriate for kids. Begin with a hook, build to a climax, and end with a resolution. Total word count: ${length * 150}.`;
+      prompt = `Write a captivating educational adventure story for ${childName}, age ${age}, set during the time of ${finalHistoryPeriod}. Begin with an exciting hook that makes history feel alive and urgent. Use real facts, names, and cultural details from that era.
+
+Story elements:
+- Include the historical figure ${finalHistoricalFigure}, and portray them accurately and engagingly.
+- The setting should feel authentic—set the scene at ${finalHistoricalLocation}, describing the environment, sights, sounds, and challenges of the time.
+- Weave in an educational focus on ${form.educationalFocus} and ensure it's naturally taught during the adventure.
+- Use immersive dialogue and emotion, letting the child learn through the character’s actions, decisions, and reflections.
+- End with a dramatic but accurate resolution that reinforces the core learning point.
+
+Structure:
+- Story should be around ${length * 150} words, broken into chapters to make it feel like a real book.
+- Feel free to insert subtle narration or "Did You Know?" facts at the end of each chapter for historical trivia.
+- Include a short bonus section at the end with 3 fun trivia questions about the real history.
+
+The tone should be adventurous, thoughtful, and emotionally engaging. Do not talk down to the reader—treat the child like a curious explorer.`;
+      // Add premium story style if it's not classic
+      if (style && style !== "classic") {
+        prompt += ` Now retell the entire story using the following unique creative style: "${stylePrompts[style]}"`;
+      }
+
     } else {
-      prompt = `Create a vivid, magical, and adventurous story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. Make it emotionally engaging, filled with imagination and wonder. The story should include important lessons about ${finalMoral}.${characters ? ` Include these characters: ${characters}.` : ""}${twist ? " Include a clever plot twist." : ""}${humor ? " Add gentle humor appropriate for kids." : ""} Make the story complete from beginning to end with a dramatic arc, emotional stakes, and a satisfying resolution. The moral must be clearly conveyed. Total word count: ${length * 150}.`;
+      prompt = `Create an immersive, high-quality bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. The story should include vivid references to well-known characters, settings, and lore from the ${finalUniverse} world.
+
+Theme: Teach the moral of ${finalMoral} in a natural and meaningful way through the character's journey. 
+
+Include:
+- A dramatic opening that quickly pulls the child into the action.
+- Dialogue and emotional moments that show character development.
+- Magical or exciting twists that keep the story exciting.
+- A meaningful resolution where the moral is learned or applied.
+${characters ? `Incorporate these characters: ${characters}.` : ""}
+${twist ? "Add an unexpected twist that makes the child gasp or laugh." : ""}
+${humor ? "Include playful humor appropriate for a young audience." : ""}
+Do not rush the ending. Make sure the story ends with a satisfying emotional or moral conclusion.
+
+Length: Aim for a ${length * 150}-word story divided into clearly labeled chapters if appropriate. Use rich storytelling language, but keep it clear and age-appropriate.`;
+      // Add premium story style if it's not classic
+      if (style && style !== "classic") {
+        prompt += ` Now retell the entire story using the following unique creative style: "${stylePrompts[style]}"`;
+      }
+
     }
     try {
       const response = await fetch("https://76d8b80e-ce1b-4bcf-b728-c8bb25077088-00-625bmg1jz2gp.picard.replit.dev/generate", {
@@ -581,7 +640,7 @@ const App: React.FC = () => {
                     childName: "", age: "", moral: "", customMoral: "", universe: "", characters: "", interests: "",
                     friends: "", siblings: "", family: "", length: 5, customUniverse: "", notes: "",
                     twist: false, humor: false, excludeScary: false, historyMode: false, historyPeriod: "",
-                    customHistoryPeriod: "", historicalFigure: "", customHistoricalFigure: "",
+                    customHistoryPeriod: "", historicalFigure: "", customHistoricalFigure: "", storyStyle: "classic",
                     historicalLocation: "", customHistoricalLocation: "", educationalFocus: "", savedStories: []
                   });
                   setStep('profile');
@@ -893,6 +952,32 @@ const App: React.FC = () => {
                 onChange={e => handleChange('length', parseInt(e.target.value))}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
+            </div>
+            {/* ✨ Story Style Selector */}
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Story Style</label>
+              <select
+                className={inputClass}
+                value={form.storyStyle || "classic"}
+                onChange={e => {
+                  const style = e.target.value;
+                  if (!isPremium && style !== "classic") {
+                    alert("Upgrade to DreamTales Unlimited to unlock premium story styles!");
+                    return;
+                  }
+                  handleChange("storyStyle", style);
+                }}
+              >
+                {storyStyles.map(style => (
+                  <option
+                    key={style.id}
+                    value={style.id}
+                    disabled={!isPremium && style.premium}
+                  >
+                    {style.label} {style.premium && !isPremium ? "🔒" : ""}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
