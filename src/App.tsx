@@ -55,8 +55,10 @@ const styleNames: Record<string, string> = {
   hiphop: "Hip-Hop Rhymes",
   shakespeare: "Shakespearean Drama",
   cowboy: "Cowboy Campfire",
+  noir: "Film Noir",
   fairytale: "Fairy Tale",
-  movie: "Movie Broadcast",
+  newsreport: "News Broadcast",
+  alien: "Alien Signal",
 };
 
 const historyPeriods = [
