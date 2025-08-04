@@ -510,60 +510,62 @@ const App: React.FC = () => {
       }
     }
 
-    const finalMoral = moral === "custom" ? customMoral : moral;
-    const finalUniverse = universe === "custom" ? customUniverse : universe;
-    const finalHistoryPeriod = form.historyPeriod === "custom" ? form.customHistoryPeriod : form.historyPeriod;
+    form.moral = form.moral === "custom" ? form.customMoral : form.moral;
     let prompt;
     if (!isPremium && form.storyStyle !== "classic") form.storyStyle = "classic";
     const style = form.storyStyle || "classic";
+    const styleInstruction = stylePrompts[style]
+      ? `Use the following storytelling style throughout the story: ${stylePrompts[style]}`
+      : "";
 
+    // HISTORY MODE
     if (form.historyMode) {
-      // Declare these variables only when they're needed
+      const finalHistoryPeriod = form.historyPeriod === "custom" ? form.customHistoryPeriod : form.historyPeriod;
       const finalHistoricalFigure = form.historicalFigure === "custom" ? form.customHistoricalFigure : form.historicalFigure;
       const finalHistoricalLocation = form.historicalLocation === "custom" ? form.customHistoricalLocation : form.historicalLocation;
 
-      prompt = `Write a captivating educational adventure story for ${childName}, age ${age}, set during the time of ${finalHistoryPeriod}. Begin with an exciting hook that makes history feel alive and urgent. Use real facts, names, and cultural details from that era.
+      prompt = `
+${styleInstruction}
+
+Write a captivating, educational, and emotionally engaging historical adventure story for a child named ${childName}, age ${age}. Set it during the time of ${finalHistoryPeriod}.
 
 Story elements:
-- Include the historical figure ${finalHistoricalFigure}, and portray them accurately and engagingly.
-- The setting should feel authentic—set the scene at ${finalHistoricalLocation}, describing the environment, sights, sounds, and challenges of the time.
-- Weave in an educational focus on ${form.educationalFocus} and ensure it's naturally taught during the adventure.
-- Use immersive dialogue and emotion, letting the child learn through the character’s actions, decisions, and reflections.
-- End with a dramatic but accurate resolution that reinforces the core learning point.
+- Include the historical figure ${finalHistoricalFigure}, portrayed accurately and engagingly.
+- The setting should be vivid and authentic: ${finalHistoricalLocation}, described with immersive details from that era.
+- Weave in an educational focus on ${form.educationalFocus} — make it fun and organically learned during the adventure.
+- Use engaging character interactions, emotional stakes, and thoughtful decisions to keep the child invested.
+- End with a dramatic but historically accurate resolution that reinforces the core learning.
 
 Structure:
-- Story should be around ${length * 150} words, broken into chapters to make it feel like a real book.
-- Feel free to insert subtle narration or "Did You Know?" facts at the end of each chapter for historical trivia.
-- Include a short bonus section at the end with 3 fun trivia questions about the real history.
-
-The tone should be adventurous, thoughtful, and emotionally engaging. Do not talk down to the reader—treat the child like a curious explorer.`;
-      // Add premium story style if it's not classic
-      if (style && style !== "classic") {
-        prompt += ` Now retell the entire story using the following unique creative style: "${stylePrompts[style]}"`;
-      }
+- The story should be approximately ${length * 150} words, broken into labeled chapters.
+- Add subtle narration or “Did You Know?” trivia facts at the end of each chapter to expand learning.
+- At the end, include 3 fun trivia questions based on real facts from the story.
+  `.trim();
 
     } else {
-      prompt = `${stylePrompts[style]}      
-Create an immersive, high-quality bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. The story should include vivid references to well-known characters, settings, and lore from the ${finalUniverse} world.
+      // FANTASY MODE
+      const finalMoral = moral === "custom" ? customMoral : moral;
+      const finalUniverse = universe === "custom" ? customUniverse : universe;
 
-Theme: Teach the moral of ${finalMoral} in a natural and meaningful way through the character's journey. 
+      prompt = `
+${styleInstruction}
+
+Create an immersive, magical bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. Pull in vivid references to famous characters, places, creatures, and lore from the ${finalUniverse} world.
+
+Theme: The story must naturally teach the moral of "${finalMoral}" through the character's journey.
 
 Include:
-- A dramatic opening that quickly pulls the child into the action.
-- Dialogue and emotional moments that show character development.
-- Magical or exciting twists that keep the story exciting.
-- A meaningful resolution where the moral is learned or applied.
-${characters ? `Incorporate these characters: ${characters}.` : ""}
-${twist ? "Add an unexpected twist that makes the child gasp or laugh." : ""}
-${humor ? "Include playful humor appropriate for a young audience." : ""}
-Do not rush the ending. Make sure the story ends with a satisfying emotional or moral conclusion.
+- A bold, exciting opening that grabs the child immediately.
+- Character-driven moments filled with emotion, empathy, and growth.
+- Magical twists or turning points that create drama, tension, and surprise.
+- A heartwarming resolution where the main character demonstrates or learns the moral.
+${characters ? `- Make sure to include the following characters: ${characters}` : ""}
+${twist ? "- Include an unexpected twist that makes the child gasp or laugh." : ""}
+${humor ? "- Add clever, age-appropriate humor throughout." : ""}
+- Avoid a rushed ending. Make the final chapter feel complete and satisfying.
 
-Length: Aim for a ${length * 150}-word story divided into clearly labeled chapters if appropriate. Use rich storytelling language, but keep it clear and age-appropriate.`;
-      // Add premium story style if it's not classic
-      if (style && style !== "classic") {
-        prompt += ` Now retell the entire story using the following unique creative style: "${stylePrompts[style]}"`;
-      }
-
+Length: Aim for about ${length * 150} words, divided into clearly labeled chapters. Use descriptive, whimsical, and emotionally rich language that’s still easy to follow.
+  `.trim();
     }
     try {
       const response = await fetch("https://76d8b80e-ce1b-4bcf-b728-c8bb25077088-00-625bmg1jz2gp.picard.replit.dev/generate", {
@@ -1028,6 +1030,22 @@ Length: Aim for a ${length * 150}-word story divided into clearly labeled chapte
                 <span className="ml-3 text-sm font-medium text-gray-700">No Scary Parts</span>
               </label>
             </div>
+            {!isPremium && (
+              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-center shadow">
+                <p className="text-yellow-800 font-medium">
+                  Want more customization? Premium unlocks all styles, longer stories, and unlimited saves!
+                </p>
+                <a
+                  href="https://yourstorename.lemon.squeezy.com/checkout/buy/xxxxxxxx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 bg-yellow-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 transition"
+                >
+                  Upgrade to DreamTales Unlimited
+                </a>
+              </div>
+            )}
+
             <div className="mb-8">
               <label className="block text-sm font-medium text-gray-700 mb-2">Story Style</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
