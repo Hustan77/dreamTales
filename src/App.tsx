@@ -493,6 +493,15 @@ const App: React.FC = () => {
 
     // Only destructure the variables you actually use
     const { childName, age, moral, customMoral, universe, customUniverse, characters, length, twist, humor } = form;
+    // Gather profile details
+    const profileDetails = [
+      form.interests && `Interests: ${form.interests}`,
+      form.friends && `Friends: ${form.friends}`,
+      form.siblings && `Siblings: ${form.siblings}`,
+      form.family && `Family: ${form.family}`,
+      form.notes && `Parent Notes: ${form.notes}`
+    ].filter(Boolean).join('\n');
+
     if (!isPremium && (form.savedStories?.length || 0) >= 3) {
       setError("You’ve reached your free story limit. Upgrade to DreamTales Unlimited to save more.");
       setLoading(false);
@@ -529,6 +538,9 @@ ${styleInstruction}
 
 Write a captivating, educational, and emotionally engaging historical adventure story for a child named ${childName}, age ${age}. Set it during the time of ${finalHistoryPeriod}.
 
+Use this background info to help personalize the story. Choose whichever details will best enhance the experience:
+${profileDetails}
+
 Story elements:
 - Include the historical figure ${finalHistoricalFigure}, portrayed accurately and engagingly.
 - The setting should be vivid and authentic: ${finalHistoricalLocation}, described with immersive details from that era.
@@ -553,6 +565,9 @@ ${styleInstruction}
 Create an immersive, magical bedtime story for a child named ${childName}, age ${age}, set in the ${finalUniverse} universe. Pull in vivid references to famous characters, places, creatures, and lore from the ${finalUniverse} world.
 
 Theme: The story must naturally teach the moral of "${finalMoral}" through the character's journey.
+
+Use this background info to help personalize the story. Choose whichever details will best enhance the experience:
+${profileDetails}
 
 Include:
 - A bold, exciting opening that grabs the child immediately.
