@@ -590,8 +590,9 @@ Length: Aim for about ${length * 150} words, divided into clearly labeled chapte
       const data = JSON.parse(text);
       setStory(data.story || "[No story returned from server.]");
       setStep('storyDisplay');
-    } catch (err: any) {
-      setError("Failed to reach the story server: " + err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError("Failed to reach the story server: " + message);
     } finally {
       setLoading(false);
     }
